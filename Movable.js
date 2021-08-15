@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Animated, PanResponder, StyleSheet} from 'react-native';
+import {Animated, PanResponder, StyleSheet, View} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
 
 export class Movable extends Component {
@@ -18,6 +18,8 @@ export class Movable extends Component {
       animate: new Animated.ValueXY(), // Inits both x and y to 0
 
       latestPosition: this.initialPosition,
+
+      atMinValue: false,
     };
 
     // Set value of x and y coordinate
@@ -59,6 +61,7 @@ export class Movable extends Component {
 
         // If finalOffset is within bounds of the slider, update state.drag to appropriate position
         if (finalOffset >= 0 && finalOffset <= this.maxOffset) {
+          console.log(gesture.dx);
           this.state.animate.setValue({x: gesture.dx, y: 0});
         }
         //
@@ -108,6 +111,14 @@ export class Movable extends Component {
         newPosition = this.maxOffset;
         // Set value to update offset x with to maxOffset - latestPosition
         updatedOffsetX = this.maxOffset - this.state.latestPosition;
+
+        // If coming from minValue/0
+        if (this.state.atMinValue) {
+          // Add component radius to updatedOffsetX
+          updatedOffsetX += this.componentRadius;
+          // Update state.atMinValue
+          this.setState({atMinValue: false});
+        }
       }
       // If gesture.dx is the same or negative
       else {
@@ -122,6 +133,13 @@ export class Movable extends Component {
         // Set value to update offset x with to negation of latestPosition
         else {
           updatedOffsetX = this.state.latestPosition * -1;
+          // If not already atMinValue
+          if (!this.state.atMinValue) {
+            // Subtract component radius from updatedOffsetX
+            updatedOffsetX -= this.componentRadius;
+          }
+
+          this.setState({atMinValue: true});
         }
       }
     }
@@ -144,18 +162,29 @@ export class Movable extends Component {
         // getLayout() converts {x, y} into
         // {left, top} for use in style
         //
-        style={[this.state.animate.getLayout(), styles.button]}
-      />
+        style={[this.state.animate.getLayout(), styles.button]}>
+        <View style={styles.dot} />
+      </Animated.View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   button: {
-    width: vw(12),
-    height: vw(12),
-    borderRadius: vw(12) / 2,
-    borderWidth: 1,
-    backgroundColor: 'blue',
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    zIndex: 99,
+  },
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 12,
+    backgroundColor: 'white',
+    zIndex: 2,
   },
 });

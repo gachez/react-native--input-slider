@@ -15,6 +15,9 @@ const App = () => {
   return (
     <View style={styles.container}>
       <View style={styles.slider}>
+        <View style={styles.mark1} />
+        <View style={styles.mark2} />
+        <View style={styles.mark3} />
         <Movable maxOffset={vw(91)} />
       </View>
     </View>
@@ -29,12 +32,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   slider: {
-    height: vh(1.5),
+    height: 2,
     width: vw(91),
     borderWidth: 1,
     borderRadius: 25,
     borderColor: '#000',
     justifyContent: 'center',
+  },
+  mark1: {
+    position: 'absolute',
+    height: 9,
+    borderWidth: 2,
+    alignSelf: 'flex-start',
+    zIndex: 1,
+  },
+  mark2: {
+    position: 'absolute',
+    height: 9,
+    borderWidth: 2,
+    alignSelf: 'center',
+    zIndex: 0,
+  },
+  mark3: {
+    position: 'absolute',
+    height: 9,
+    borderWidth: 2,
+    alignSelf: 'flex-end',
+    zIndex: 1,
   },
 });
 export default App;
